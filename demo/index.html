@@ -1,83 +1,172 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>fastboot.js demo</title>
-        <script src="../dist/fastboot.mjs" type="module"></script>
-        <script src="download.js" type="module"></script>
-        <script src="ui.js" type="module"></script>
-    </head>
+<head>
+    <title>Fastboot tool</title>
 
-    <body>
-        <div>
-            <p>Status: <span class="status-field">Not connected</span></p>
-            <button class="connect-button">Connect device</button>
-        </div>
+    <script src="../dist/fastboot.mjs" type="module"></script>
+    <script src="download.js" type="module"></script>
+    <script src="ui.js" type="module"></script>
 
-        <hr />
+    <style>
+        body {
+            margin: 0;
+            background: #0f0f0f;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: #e0e0e0;
+        }
 
-        <div>
-            <form class="command-form">
-                <label for="command">Command:</label>
-                <input type="text" name="command" class="command-input" />
-                <input type="submit" value="Send" />
-            </form>
-            <p>Result:</p>
-            <pre class="result-field"></pre>
-        </div>
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
 
-        <hr />
+        .title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #3ddc84;
+            margin-bottom: 30px;
+        }
 
-        <div>
-            <form class="boot-form">
-                <label for="boot-file">Boot image:</label>
-                <input type="file" name="boot-file" class="boot-file" />
-                <input type="submit" value="Boot" />
-            </form>
-        </div>
+        .card {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 15px rgba(0, 255, 128, 0.08);
+        }
 
-        <hr />
+        .card h3 {
+            margin-top: 0;
+            color: #3ddc84;
+        }
 
-        <div>
-            <form class="flash-form">
-                <label for="flash-file">Flash image:</label>
-                <input type="file" name="flash-file" class="flash-file" />
-                <br />
-                <label for="flash-partition">Partition:</label>
-                <input
-                    type="text"
-                    name="flash-partition"
-                    class="flash-partition"
-                />
-                <input type="submit" value="Flash" />
-            </form>
-        </div>
+        button, input[type="submit"] {
+            background: #3ddc84;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
 
-        <hr />
+        button:hover, input[type="submit"]:hover {
+            background: #2fc06f;
+        }
 
-        <div>
-            <p>Status: <span class="factory-status-field"></span></p>
-            <progress class="factory-progress-bar" max="1" value="0"></progress>
-            <button class="reconnect-button" style="display: none;"><h3>Reconnect device</h3></button>
-            <br />
-            <form class="factory-form">
-                <label for="factory-file"
-                    >Flash custom factory images zip:</label
-                >
-                <br />
-                <input type="file" name="factory-file" class="factory-file" />
-                <br />
-                <input type="submit" value="Flash selected zip" />
-            </form>
-            <br />
-            <span>Flash test zip (only works locally):</span>
-            <br />
-            <button class="download-zip-button">
-                Download taimen factory zip
-            </button>
-            <br />
-            <button class="flash-zip-button">Flash downloaded zip</button>
-            <br />
-            <pre class="factory-flash-log"></pre>
-        </div>
-    </body>
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 10px;
+            padding: 6px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .status-field,
+        .factory-status-field {
+            color: #3ddc84;
+            font-weight: bold;
+        }
+
+        .result-field,
+        .factory-flash-log {
+            background: #111;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow: auto;
+            font-size: 13px;
+        }
+
+        progress {
+            width: 100%;
+            height: 15px;
+            margin: 10px 0;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="title">Android Fastboot Web Tool</div>
+
+    <div class="card">
+        <h3>Device Connection</h3>
+        <p>Status: <span class="status-field">Not connected</span></p>
+        <button class="connect-button">Connect Device</button>
+    </div>
+
+    <div class="card">
+        <h3>Fastboot Command</h3>
+        <form class="command-form">
+            <label>Command:</label>
+            <input type="text" name="command" class="command-input" />
+            <input type="submit" value="Send Command" />
+        </form>
+        <p>Result:</p>
+        <pre class="result-field"></pre>
+    </div>
+
+    <div class="card">
+        <h3>Boot Image</h3>
+        <form class="boot-form">
+            <input type="file" name="boot-file" class="boot-file" />
+            <input type="submit" value="Boot Image" />
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Flash Partition</h3>
+        <form class="flash-form">
+            <label>Select Image:</label>
+            <input type="file" name="flash-file" class="flash-file" />
+            <label>Partition Name:</label>
+            <input type="text" name="flash-partition" class="flash-partition" />
+            <input type="submit" value="Flash Partition" />
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Factory Image Flash</h3>
+        <p>Status: <span class="factory-status-field"></span></p>
+        <progress class="factory-progress-bar" max="1" value="0"></progress>
+
+        <button class="reconnect-button" style="display: none;">Reconnect Device</button>
+
+        <form class="factory-form">
+            <input type="file" name="factory-file" class="factory-file" />
+            <input type="submit" value="Flash Selected Zip" />
+        </form>
+
+        <br />
+        <button class="download-zip-button">
+            Download Taimen Factory Zip
+        </button>
+
+        <button class="flash-zip-button">
+            Flash Downloaded Zip
+        </button>
+
+        <pre class="factory-flash-log"></pre>
+    </div>
+
+    <div class="footer">
+        Author Shiina_Mahiru · 毛毛
+    </div>
+
+</div>
+</body>
 </html>
