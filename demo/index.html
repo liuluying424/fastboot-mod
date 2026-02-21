@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fastboot tool</title>
+    <title>Fastboot Tool</title>
 
     <script src="../dist/fastboot.mjs" type="module"></script>
     <script src="download.js" type="module"></script>
@@ -101,70 +101,70 @@
 <body>
 <div class="container">
 
-    <div class="title">Android Fastboot Web Tool</div>
+    <div class="title">安卓 Fastboot 在线刷机工具</div>
 
     <div class="card">
-        <h3>Device Connection</h3>
-        <p>Status: <span class="status-field">Not connected</span></p>
-        <button class="connect-button">Connect Device</button>
+        <h3>设备连接</h3>
+        <p>当前状态：<span class="status-field">未连接设备</span></p>
+        <button class="connect-button">连接设备</button>
     </div>
 
     <div class="card">
-        <h3>Fastboot Command</h3>
+        <h3>Fastboot 指令模式</h3>
         <form class="command-form">
-            <label>Command:</label>
-            <input type="text" name="command" class="command-input" />
-            <input type="submit" value="Send Command" />
+            <label>输入指令：</label>
+            <input type="text" name="command" class="command-input" placeholder="例如：getvar all" />
+            <input type="submit" value="发送指令" />
         </form>
-        <p>Result:</p>
+        <p>返回结果：</p>
         <pre class="result-field"></pre>
     </div>
 
     <div class="card">
-        <h3>Boot Image</h3>
+        <h3>临时启动镜像（Boot）</h3>
         <form class="boot-form">
             <input type="file" name="boot-file" class="boot-file" />
-            <input type="submit" value="Boot Image" />
+            <input type="submit" value="启动镜像文件" />
         </form>
     </div>
 
     <div class="card">
-        <h3>Flash Partition</h3>
+        <h3>刷写分区</h3>
         <form class="flash-form">
-            <label>Select Image:</label>
+            <label>选择镜像文件：</label>
             <input type="file" name="flash-file" class="flash-file" />
-            <label>Partition Name:</label>
-            <input type="text" name="flash-partition" class="flash-partition" />
-            <input type="submit" value="Flash Partition" />
+            <label>输入分区名称：</label>
+            <input type="text" name="flash-partition" class="flash-partition" placeholder="例如：boot / recovery / system" />
+            <input type="submit" value="开始刷写" />
         </form>
     </div>
 
     <div class="card">
-        <h3>Factory Image Flash</h3>
-        <p>Status: <span class="factory-status-field"></span></p>
+        <h3>官方固件刷写（Factory Image）</h3>
+        <p>当前状态：<span class="factory-status-field"></span></p>
         <progress class="factory-progress-bar" max="1" value="0"></progress>
 
-        <button class="reconnect-button" style="display: none;">Reconnect Device</button>
+        <button class="reconnect-button" style="display: none;">重新连接设备</button>
 
         <form class="factory-form">
             <input type="file" name="factory-file" class="factory-file" />
-            <input type="submit" value="Flash Selected Zip" />
+            <input type="submit" value="刷写选中的固件压缩包" />
         </form>
 
         <br />
         <button class="download-zip-button">
-            Download Taimen Factory Zip
+            下载官方测试固件
         </button>
 
         <button class="flash-zip-button">
-            Flash Downloaded Zip
+            刷写已下载固件
         </button>
 
         <pre class="factory-flash-log"></pre>
     </div>
 
     <div class="footer">
-        Author Shiina_Mahiru · 毛毛
+        作者 Shiina_Mahiru · 毛毛 ｜ WebUSB 在线刷机工具
     </div>
 
 </div>
