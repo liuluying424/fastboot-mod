@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fastboot 管理工具</title>
+    <title>Fastboot Tool </title>
 
     <script src="../dist/fastboot.mjs" type="module"></script>
     <script src="download.js" type="module"></script>
@@ -10,46 +10,48 @@
     <style>
         body {
             margin: 0;
-            background: linear-gradient(145deg,#0f1115,#141824);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+            background: radial-gradient(circle at top, #1a1f2b, #0f1115 60%);
+            font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
             color: #e6e6e6;
         }
 
         .container {
-            max-width: 900px;
-            margin: 50px auto;
+            max-width: 920px;
+            margin: 60px auto;
             padding: 20px;
         }
 
         .title {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 600;
-            margin-bottom: 35px;
+            margin-bottom: 40px;
             text-align: center;
-            color: #ffffff;
             letter-spacing: 1px;
+            background: linear-gradient(90deg,#4da3ff,#7f5cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .card {
-            background: rgba(30,30,30,0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.2s;
+            background: rgba(20,20,30,0.85);
+            border-radius: 18px;
+            padding: 26px;
+            margin-bottom: 26px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: 0.25s ease;
         }
 
         .card:hover {
             transform: translateY(-3px);
+            box-shadow: 0 14px 50px rgba(0,0,0,0.6);
         }
 
         .card h3 {
             margin-top: 0;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 500;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             color: #ffffff;
         }
 
@@ -59,60 +61,65 @@
         }
 
         button, input[type="submit"] {
-            background: linear-gradient(90deg,#1677ff,#3a8cff);
+            background: linear-gradient(135deg,#1677ff,#4da3ff);
             border: none;
-            padding: 9px 18px;
+            padding: 10px 22px;
             border-radius: 999px;
             font-size: 14px;
             font-weight: 500;
             color: white;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.25s ease;
             margin-top: 12px;
         }
 
         button:hover, input[type="submit"]:hover {
-            opacity: 0.85;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(22,119,255,0.4);
         }
 
         input[type="text"], input[type="file"] {
             width: 100%;
             margin-top: 10px;
-            margin-bottom: 14px;
-            padding: 10px 14px;
-            background: #1b1f2a;
-            border: 1px solid #2a2f3d;
-            border-radius: 14px;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: #141824;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
             color: #ffffff;
             font-size: 14px;
+            transition: 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4da3ff;
+            box-shadow: 0 0 0 2px rgba(77,163,255,0.2);
         }
 
         .result-field {
-            background: #0f1115;
-            border-radius: 14px;
-            padding: 14px;
+            background: #0f131d;
+            border-radius: 12px;
+            padding: 16px;
             max-height: 240px;
             overflow: auto;
             font-size: 13px;
-            border: 1px solid #2a2f3d;
+            border: 1px solid rgba(255,255,255,0.06);
         }
 
-        .quick-buttons {
-            margin-top: 10px;
+        .result-field::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .quick-buttons button {
-            margin-right: 8px;
-            margin-bottom: 6px;
-            padding: 6px 14px;
-            font-size: 12px;
-            border-radius: 20px;
+        .result-field::-webkit-scrollbar-thumb {
+            background: #2c3446;
+            border-radius: 6px;
         }
 
         .footer {
             text-align: center;
             font-size: 12px;
-            margin-top: 50px;
+            margin-top: 60px;
             color: #777;
         }
     </style>
@@ -121,7 +128,7 @@
 <body>
 <div class="container">
 
-    <div class="title">Fastboot 工具</div>
+    <div class="title">Fastboot 管理工具</div>
 
     <div class="card">
         <h3>设备连接</h3>
@@ -135,15 +142,6 @@
             <input type="text" name="command" class="command-input" placeholder="例如：getvar all" />
             <input type="submit" value="发送指令" />
         </form>
-
-        <!-- 新增快捷按钮（不改逻辑） -->
-        <div class="quick-buttons">
-            <button type="button" onclick="quickCmd('getvar all')">获取信息</button>
-            <button type="button" onclick="quickCmd('reboot')">重启</button>
-            <button type="button" onclick="quickCmd('reboot bootloader')">重启Bootloader</button>
-            <button type="button" onclick="quickCmd('devices')">检测设备</button>
-        </div>
-
         <p>输出结果：</p>
         <pre class="result-field"></pre>
     </div>
@@ -160,43 +158,16 @@
         <h3>刷写分区</h3>
         <form class="flash-form">
             <input type="file" name="flash-file" class="flash-file" />
-
-          
-            <input type="text" 
-                   name="flash-partition" 
-                   class="flash-partition" 
-                   list="partition-list"
-                   placeholder="请输入分区名称：boot / recovery / system" />
-
-           
-            <datalist id="partition-list">
-                <option value="boot">
-                <option value="recovery">
-                <option value="vendor_boot">
-                <option value="dtbo">
-                <option value="vbmeta">
-                <option value="system">
-            </datalist>
-
+            <input type="text" name="flash-partition" class="flash-partition" placeholder="请输入分区名称：boot / recovery / system" />
             <input type="submit" value="开始刷写" />
         </form>
     </div>
 
     <div class="footer">
-        作者 Shiina_Mahiru · 毛毛
+        作者 Shiina_Mahiru · 毛毛<br>
+        原项目地址：<a href="https://github.com/kdrag0n/fastboot.js" target="_blank" style="color:#4da3ff;text-decoration:none;">https://github.com/kdrag0n/fastboot.js</a>
     </div>
 
 </div>
-
-
-<script>
-function quickCmd(cmd) {
-    const input = document.querySelector('.command-input');
-    const form = document.querySelector('.command-form');
-    input.value = cmd;
-    form.dispatchEvent(new Event('submit', { cancelable: true }));
-}
-</script>
-
 </body>
 </html>
