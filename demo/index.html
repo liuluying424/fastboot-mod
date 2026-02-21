@@ -10,13 +10,13 @@
     <style>
         body {
             margin: 0;
-            background: #121212;
+            background: linear-gradient(145deg,#0f1115,#141824);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
             color: #e6e6e6;
         }
 
         .container {
-            max-width: 880px;
+            max-width: 900px;
             margin: 50px auto;
             padding: 20px;
         }
@@ -27,15 +27,22 @@
             margin-bottom: 35px;
             text-align: center;
             color: #ffffff;
+            letter-spacing: 1px;
         }
 
         .card {
-            background: #1e1e1e;
+            background: rgba(30,30,30,0.8);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 24px;
             margin-bottom: 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
         }
 
         .card h3 {
@@ -52,9 +59,9 @@
         }
 
         button, input[type="submit"] {
-            background: #1677ff;
+            background: linear-gradient(90deg,#1677ff,#3a8cff);
             border: none;
-            padding: 10px 20px;
+            padding: 9px 18px;
             border-radius: 999px;
             font-size: 14px;
             font-weight: 500;
@@ -65,7 +72,7 @@
         }
 
         button:hover, input[type="submit"]:hover {
-            background: #0f5fd4;
+            opacity: 0.85;
         }
 
         input[type="text"], input[type="file"] {
@@ -73,28 +80,40 @@
             margin-top: 10px;
             margin-bottom: 14px;
             padding: 10px 14px;
-            background: #2a2a2a;
-            border: 1px solid #333;
+            background: #1b1f2a;
+            border: 1px solid #2a2f3d;
             border-radius: 14px;
             color: #ffffff;
             font-size: 14px;
         }
 
         .result-field {
-            background: #151515;
+            background: #0f1115;
             border-radius: 14px;
             padding: 14px;
-            max-height: 220px;
+            max-height: 240px;
             overflow: auto;
             font-size: 13px;
-            border: 1px solid #2a2a2a;
+            border: 1px solid #2a2f3d;
+        }
+
+        .quick-buttons {
+            margin-top: 10px;
+        }
+
+        .quick-buttons button {
+            margin-right: 8px;
+            margin-bottom: 6px;
+            padding: 6px 14px;
+            font-size: 12px;
+            border-radius: 20px;
         }
 
         .footer {
             text-align: center;
             font-size: 12px;
             margin-top: 50px;
-            color: #888;
+            color: #777;
         }
     </style>
 </head>
@@ -102,7 +121,7 @@
 <body>
 <div class="container">
 
-    <div class="title">Fastboot 管理工具</div>
+    <div class="title">Fastboot 工具</div>
 
     <div class="card">
         <h3>设备连接</h3>
@@ -116,6 +135,15 @@
             <input type="text" name="command" class="command-input" placeholder="例如：getvar all" />
             <input type="submit" value="发送指令" />
         </form>
+
+        <!-- 新增快捷按钮（不改逻辑） -->
+        <div class="quick-buttons">
+            <button type="button" onclick="quickCmd('getvar all')">获取信息</button>
+            <button type="button" onclick="quickCmd('reboot')">重启</button>
+            <button type="button" onclick="quickCmd('reboot bootloader')">重启Bootloader</button>
+            <button type="button" onclick="quickCmd('devices')">检测设备</button>
+        </div>
+
         <p>输出结果：</p>
         <pre class="result-field"></pre>
     </div>
@@ -132,7 +160,24 @@
         <h3>刷写分区</h3>
         <form class="flash-form">
             <input type="file" name="flash-file" class="flash-file" />
-            <input type="text" name="flash-partition" class="flash-partition" placeholder="请输入分区名称：boot / recovery / system" />
+
+          
+            <input type="text" 
+                   name="flash-partition" 
+                   class="flash-partition" 
+                   list="partition-list"
+                   placeholder="请输入分区名称：boot / recovery / system" />
+
+           
+            <datalist id="partition-list">
+                <option value="boot">
+                <option value="recovery">
+                <option value="vendor_boot">
+                <option value="dtbo">
+                <option value="vbmeta">
+                <option value="system">
+            </datalist>
+
             <input type="submit" value="开始刷写" />
         </form>
     </div>
@@ -142,5 +187,16 @@
     </div>
 
 </div>
+
+
+<script>
+function quickCmd(cmd) {
+    const input = document.querySelector('.command-input');
+    const form = document.querySelector('.command-form');
+    input.value = cmd;
+    form.dispatchEvent(new Event('submit', { cancelable: true }));
+}
+</script>
+
 </body>
 </html>
