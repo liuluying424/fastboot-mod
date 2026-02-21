@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fastboot Tool</title>
+    <title>Fastboot 管理工具</title>
 
     <script src="../dist/fastboot.mjs" type="module"></script>
     <script src="download.js" type="module"></script>
@@ -10,90 +10,91 @@
     <style>
         body {
             margin: 0;
-            background: #0f0f0f;
-            font-family: "Segoe UI", Arial, sans-serif;
-            color: #e0e0e0;
+            background: #121212;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+            color: #e6e6e6;
         }
 
         .container {
-            max-width: 900px;
-            margin: 30px auto;
+            max-width: 880px;
+            margin: 50px auto;
             padding: 20px;
         }
 
         .title {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 35px;
             text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #3ddc84;
-            margin-bottom: 30px;
+            color: #ffffff;
         }
 
         .card {
-            background: #1a1a1a;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 0 15px rgba(0, 255, 128, 0.08);
+            background: #1e1e1e;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .card h3 {
             margin-top: 0;
-            color: #3ddc84;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .status-field {
+            color: #4da3ff;
+            font-weight: 500;
         }
 
         button, input[type="submit"] {
-            background: #3ddc84;
+            background: #1677ff;
             border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
             cursor: pointer;
-            margin-top: 10px;
+            transition: 0.2s;
+            margin-top: 12px;
         }
 
         button:hover, input[type="submit"]:hover {
-            background: #2fc06f;
+            background: #0f5fd4;
         }
 
         input[type="text"], input[type="file"] {
             width: 100%;
-            margin-top: 8px;
-            margin-bottom: 10px;
-            padding: 6px;
+            margin-top: 10px;
+            margin-bottom: 14px;
+            padding: 10px 14px;
             background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 5px;
-            color: #fff;
+            border: 1px solid #333;
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 14px;
         }
 
-        .status-field,
-        .factory-status-field {
-            color: #3ddc84;
-            font-weight: bold;
-        }
-
-        .result-field,
-        .factory-flash-log {
-            background: #111;
-            padding: 10px;
-            border-radius: 5px;
-            max-height: 200px;
+        .result-field {
+            background: #151515;
+            border-radius: 14px;
+            padding: 14px;
+            max-height: 220px;
             overflow: auto;
             font-size: 13px;
-        }
-
-        progress {
-            width: 100%;
-            height: 15px;
-            margin: 10px 0;
+            border: 1px solid #2a2a2a;
         }
 
         .footer {
             text-align: center;
             font-size: 12px;
-            margin-top: 40px;
-            color: #666;
+            margin-top: 50px;
+            color: #888;
         }
     </style>
 </head>
@@ -101,70 +102,43 @@
 <body>
 <div class="container">
 
-    <div class="title">安卓 Fastboot 在线刷机工具</div>
+    <div class="title">Fastboot 管理工具</div>
 
     <div class="card">
         <h3>设备连接</h3>
-        <p>当前状态：<span class="status-field">未连接设备</span></p>
+        <p>当前状态：<span class="status-field">未连接</span></p>
         <button class="connect-button">连接设备</button>
     </div>
 
     <div class="card">
         <h3>Fastboot 指令模式</h3>
         <form class="command-form">
-            <label>输入指令：</label>
             <input type="text" name="command" class="command-input" placeholder="例如：getvar all" />
             <input type="submit" value="发送指令" />
         </form>
-        <p>返回结果：</p>
+        <p>输出结果：</p>
         <pre class="result-field"></pre>
     </div>
 
     <div class="card">
-        <h3>临时启动镜像（Boot）</h3>
+        <h3>临时启动镜像</h3>
         <form class="boot-form">
             <input type="file" name="boot-file" class="boot-file" />
-            <input type="submit" value="启动镜像文件" />
+            <input type="submit" value="启动镜像" />
         </form>
     </div>
 
     <div class="card">
         <h3>刷写分区</h3>
         <form class="flash-form">
-            <label>选择镜像文件：</label>
             <input type="file" name="flash-file" class="flash-file" />
-            <label>输入分区名称：</label>
-            <input type="text" name="flash-partition" class="flash-partition" placeholder="例如：boot / recovery / system" />
+            <input type="text" name="flash-partition" class="flash-partition" placeholder="请输入分区名称：boot / recovery / system" />
             <input type="submit" value="开始刷写" />
         </form>
     </div>
 
-    <div class="card">
-        <h3>官方固件刷写（Factory Image）</h3>
-        <p>当前状态：<span class="factory-status-field"></span></p>
-        <progress class="factory-progress-bar" max="1" value="0"></progress>
-
-        <button class="reconnect-button" style="display: none;">重新连接设备</button>
-
-        <form class="factory-form">
-            <input type="file" name="factory-file" class="factory-file" />
-            <input type="submit" value="刷写选中的固件压缩包" />
-        </form>
-
-        <br />
-        <button class="download-zip-button">
-            下载官方测试固件
-        </button>
-
-        <button class="flash-zip-button">
-            刷写已下载固件
-        </button>
-
-        <pre class="factory-flash-log"></pre>
-    </div>
-
     <div class="footer">
-        作者 Shiina_Mahiru · 毛毛 ｜ WebUSB 在线刷机工具
+        作者 Shiina_Mahiru · 毛毛
     </div>
 
 </div>
