@@ -1,246 +1,151 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
-    <title>Fastboot Tool</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fastboot 管理工具</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
 
-    <script src="../dist/fastboot.mjs" type="module"></script>
-    <script src="download.js" type="module"></script>
-    <script src="ui.js" type="module"></script>
+body {
+    background: radial-gradient(circle at top, #0f1c2e, #050b16);
+    color: #fff;
+    padding: 20px;
+}
 
-    <style>
-        body {
-            margin: 0;
-            background: radial-gradient(circle at 20% 0%, #1a2a4a, #0b0f17 60%);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
-            color: #e6e6e6;
-            overflow-x: hidden;
-        }
+h1 {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 25px;
+    background: linear-gradient(90deg,#4facfe,#00f2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 16px;
-        }
+.card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 0 30px rgba(0,150,255,0.15);
+}
 
-        .title {
-            font-size: 26px;
-            font-weight: 600;
-            margin-bottom: 30px;
-            text-align: center;
-            background: linear-gradient(90deg,#4da3ff,#7f5cff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+.status span {
+    color: #00d9ff;
+}
 
-        .card {
-            background: rgba(20,25,40,0.92);
-            border-radius: 18px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(77,163,255,0.15);
-            box-shadow: 0 0 20px rgba(77,163,255,0.08);
-            transition: 0.3s ease;
-        }
+button {
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+}
 
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 0 30px rgba(77,163,255,0.25);
-        }
+.primary-btn {
+    width: 100%;
+    margin-top: 15px;
+    background: linear-gradient(90deg,#0072ff,#00c6ff);
+    color: #fff;
+    font-weight: bold;
+}
 
-        .card h3 {
-            margin-top: 0;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 14px;
-            color: #ffffff;
-        }
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px #00c6ff;
+}
 
-        .status-field {
-            color: #4da3ff;
-            font-weight: 500;
-        }
+/* 快捷按钮网格 */
+.quick-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+}
 
-        button, input[type="submit"] {
-            background: linear-gradient(135deg,#1677ff,#4da3ff);
-            border: none;
-            padding: 10px 18px;
-            border-radius: 999px;
-            font-size: 14px;
-            font-weight: 500;
-            color: white;
-            cursor: pointer;
-            transition: 0.25s ease;
-            margin-top: 12px;
-            box-shadow: 0 0 10px rgba(22,119,255,0.3);
-        }
+@media(min-width: 768px) {
+    .quick-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
 
-        button:hover, input[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 18px rgba(22,119,255,0.6);
-        }
+.quick-btn {
+    background: rgba(0,180,255,0.12);
+    color: #00d9ff;
+    border: 1px solid rgba(0,200,255,0.4);
+}
 
-        input[type="text"], input[type="file"] {
-            width: 100%;
-            margin-top: 10px;
-            margin-bottom: 14px;
-            padding: 12px 14px;
-            background: #141a28;
-            border: 1px solid rgba(77,163,255,0.15);
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
+.quick-btn:hover {
+    background: rgba(0,200,255,0.25);
+    box-shadow: 0 0 15px rgba(0,200,255,0.5);
+    transform: translateY(-2px);
+}
 
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #4da3ff;
-            box-shadow: 0 0 10px rgba(77,163,255,0.4);
-        }
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 
-        .result-field {
-            background: #0f1420;
-            border-radius: 12px;
-            padding: 12px;
-            max-height: 200px;
-            overflow: auto;
-            font-size: 13px;
-            border: 1px solid rgba(77,163,255,0.15);
-        }
-
-       
-        .quick-buttons {
-            margin-top: 12px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .quick-buttons button {
-            flex: 1 1 auto;
-            min-width: 110px;
-            padding: 8px 12px;
-            font-size: 12px;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 11px;
-            margin-top: 50px;
-            color: #777;
-            line-height: 1.6;
-        }
-
-        .footer a {
-            color: #4da3ff;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* 小屏进一步优化 */
-        @media (max-width: 480px) {
-
-            .title {
-                font-size: 22px;
-            }
-
-            .card {
-                padding: 16px;
-            }
-
-            button, input[type="submit"] {
-                width: 100%;
-            }
-
-            .quick-buttons button {
-                min-width: 100%;
-            }
-
-        }
-    </style>
+.result-field {
+    background: rgba(0,0,0,0.6);
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 13px;
+    margin-top: 10px;
+    min-height: 60px;
+    overflow-y: auto;
+    border: 1px solid rgba(0,200,255,0.3);
+}
+</style>
 </head>
 
 <body>
-<div class="container">
 
-    <div class="title">Fastboot 管理工具</div>
+<h1>Fastboot Tool</h1>
 
-    <div class="card">
-        <h3>设备连接</h3>
-        <p>当前状态：<span class="status-field">未连接</span></p>
-        <button class="connect-button">连接设备</button>
-    </div>
-
-    <div class="card">
-        <h3>Fastboot 指令模式</h3>
-        <form class="command-form">
-            <input type="text" name="command" class="command-input" placeholder="例如：getvar all" />
-            <input type="submit" value="发送指令" />
-        </form>
-
-        <div class="quick-buttons">
-            <button type="button" onclick="quickCmd('getvar all')">获取信息</button>
-            <button type="button" onclick="quickCmd('reboot')">重启</button>
-            <button type="button" onclick="quickCmd('reboot bootloader')">重启Bootloader</button>
-            <button type="button" onclick="quickCmd('devices')">检测设备</button>
-        </div>
-
-        <p>输出结果：</p>
-        <pre class="result-field"></pre>
-    </div>
-
-    <div class="card">
-        <h3>临时启动镜像</h3>
-        <form class="boot-form">
-            <input type="file" name="boot-file" class="boot-file" />
-            <input type="submit" value="启动镜像" />
-        </form>
-    </div>
-
-    <div class="card">
-        <h3>刷写分区</h3>
-        <form class="flash-form">
-            <input type="file" name="flash-file" class="flash-file" />
-            <input type="text" 
-                   name="flash-partition" 
-                   class="flash-partition" 
-                   list="partition-list"
-                   placeholder="请输入分区名称：boot / recovery / system" />
-            <datalist id="partition-list">
-                <option value="boot">
-                <option value="recovery">
-                <option value="vendor_boot">
-                <option value="dtbo">
-                <option value="vbmeta">
-                <option value="system">
-            </datalist>
-            <input type="submit" value="开始刷写" />
-        </form>
-    </div>
-
-    <div class="footer">
-        作者 Shiina_Mahiru · 毛毛<br>
-        原项目地址：
-        <a href="https://github.com/kdrag0n/fastboot.js" target="_blank">
-            https://github.com/kdrag0n/fastboot.js
-        </a>
-    </div>
-
+<div class="card">
+    <h3>设备连接</h3>
+    <p class="status">当前状态: <span id="status">未连接</span></p>
+    <button class="primary-btn" onclick="connectDevice()">连接设备</button>
 </div>
 
-<script>
-function quickCmd(cmd) {
-    const input = document.querySelector('.command-input');
-    const form = document.querySelector('.command-form');
-    input.value = cmd;
-    form.dispatchEvent(new Event('submit', { cancelable: true }));
-}
-</script>
+<div class="card">
+    <h3>Fastboot 指令模式</h3>
 
+    <input type="text" id="commandInput" value="devices">
+
+    <button class="primary-btn" onclick="sendCommand()">发送指令</button>
+
+    <div class="quick-grid">
+        <button class="quick-btn" onclick="quickCmd('getvar all')">获取信息</button>
+        <button class="quick-btn" onclick="quickCmd('reboot')">重启</button>
+        <button class="quick-btn" onclick="quickCmd('reboot bootloader')">重启Bootloader</button>
+        <button class="quick-btn" onclick="quickCmd('devices')">检测设备</button>
+    </div>
+
+    <h4 style="margin-top:20px;">输出结果:</h4>
+    <pre class="result-field"></pre>
+</div>
+
+<div style="text-align:center; font-size:12px; opacity:0.6; margin-top:20px;">
+    作者: 你的名字<br>
+    原作项目地址: https://github.com/kdrag0n/fastboot.js
+</div>
+
+<script src="ui.js"></script>
 </body>
 </html>
